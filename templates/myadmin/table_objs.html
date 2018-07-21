@@ -1,0 +1,85 @@
+{%  extends 'myadmin/table_index.html' %}
+{% load tags %}
+
+{% block container %}
+
+    <div class="panel panel-info">
+          <div class="panel-heading">
+            <h3 class="panel-title">{% get_model_name admin_class %}
+                <a href="{{ request.path }}add/" class="pull-right">Add</a>
+            </h3>
+          </div>
+          <div class="panel-body">
+               <div class="row">
+                <form class="" method="get">
+                  {% for condtion in admin_class.list_filters %}
+                    <div class="col-lg-2" style="display:inline-block;">
+                    <span>{{ condtion }}</span>
+                    {% render_filter_ele condtion admin_class filter_condtions %}
+
+                    </div>
+
+                  {% endfor %}
+
+                    <button type="SUBMIT" class="btn btn-success">检索</button>
+
+
+                <hr>
+                  <div class="row">
+                      <div class="col-lg-3"　>
+                        <input type="search" name="_q" class="form-control" style="margin-left:15px" value="{{ search_text }}" placeholder="search by {% for search_field in admin_class.search_fields %}{{ search_field }},{% endfor %} ">
+                      </div>
+                      <div class="col-lg-2"　>
+                        <button type="SUBMIT" class="btn btn-success">search</button>
+                      </div>
+                  </div>
+
+                </form>
+
+               </div>
+              <table class="table table-hover">
+                  <thead>
+                    <tr>
+                        {% for column in admin_class.list_display %}
+
+
+                            {% build_table_header_column column %}
+
+                        {% endfor %}
+
+                    </tr>
+                  </thead>
+              <tfoot>
+                    <tr>
+                        <td></td>
+                        <td>总计{{ query_sets.paginator.count }}条</td></tr>
+                  </tfoot>
+                  <tbody>
+
+                    {% for obj in query_sets %}
+                    <tr>
+                        {% build_table_row request obj admin_class %}
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+              </table>
+
+          <nav>
+              <ul class="pagination">
+                  {% if query_sets.has_previous %}
+                        <li class=""><a href="?page={{ query_sets.previous_page_number }}">上页</a></li>
+                  {% endif %}
+
+                  {% build_paginators query_sets  %}
+
+                  {% if query_sets.has_next %}
+                        <li class=""><a href="?page={{ query_sets.next_page_number }}">下页</a></li>
+                  {% endif %}
+
+              </ul>
+          </nav>
+
+          </div>
+    </div>
+
+{% endblock %}
